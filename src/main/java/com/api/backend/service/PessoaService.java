@@ -1,19 +1,19 @@
 package com.api.backend.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.api.backend.dto.PessoaDTO;
 import com.api.backend.entity.Pessoa;
 import com.api.backend.repository.PessoaRepository;
-import com.api.backend.service.exceptions.DataIntegrityViolationException;
 import com.api.backend.service.exceptions.ObjectNotFoundException;
 
+@Service
 public class PessoaService {
-	
+
 	@Autowired
 	private PessoaRepository repository;
 
@@ -36,7 +36,7 @@ public class PessoaService {
 	}
 
 	public Pessoa atualizar(PessoaDTO obj) {
-		listarPorCpf(obj);
+		
 		return repository.save(mapper.map(obj, Pessoa.class));
 
 	}
@@ -44,13 +44,6 @@ public class PessoaService {
 	public void apaga(Long id) {
 		var obj = repository.findById(id).orElseThrow(() -> new ObjectNotFoundException("Objeto não encontrado"));
 		repository.delete(obj);
-	}
-
-	public void listarPorCpf(PessoaDTO obj) {
-		Optional<Pessoa> user = repository.listarPorCpf(obj.getCpf());
-		if (user.isPresent() && !user.get().getId().equals(obj.getId())) {
-			throw new DataIntegrityViolationException("Objeto já cadastrado");
-		}
 	}
 
 }
